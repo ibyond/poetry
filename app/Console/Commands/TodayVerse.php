@@ -51,21 +51,19 @@ class TodayVerse extends Command
             } elseif($form->time >= $tomorrow){//找到明天的，不用生成
                 $this->info('不用生成今日名句计划');
             } else {//找到小于今日的名句，补充生成其中的空缺
-                // todo 找到小于今日的名句，补充生成其中的空缺
+                $this->generBeferToadyVerse($form->time);
+
+                //生成今日
+                $this->createTodayVerse($today);
+                $this->info('生成今日名句计划:' . $today);
+                //生成明日
+                $this->createTodayVerse($tomorrow);
+                $this->info('生成明日名句计划:' . $tomorrow);
             }
         } else {//刚才开始，生成一个月前的和今天和明天
-            $todays = Carbon::today();
-            $days = $todays->diffInDays($todays->copy()->subMonth());
             //生成今日之前一个月内
-            for ($i = $days; $i >= 1; $i--) {
-                $date = $todays->copy()->sub($i . ' day');
-                $exists = Today::query()->where('time',$date->copy()->toDateString())->exists();
-                if ($exists) {
-                    continue;
-                }
-                $this->createTodayVerse($date);
-                $this->info('生成今日名句计划:' . $date);
-            }
+            $this->generBeferToadyVerse(Carbon::today()->subMonth());
+
             //生成今日
             $this->createTodayVerse($today);
             $this->info('生成今日名句计划:' . $today);
@@ -75,6 +73,21 @@ class TodayVerse extends Command
         }
     }
 
+    protected function generBeferToadyVerse($beforTime = '')
+    {
+        $todays = Carbon::today();
+        $days = $todays->diffInDays($beforTime);
+        //生成今日之前一个月内
+        for ($i = $days; $i >= 1; $i--) {
+            $date = $todays->copy()->sub($i . ' day');
+            $exists = Today::query()->where('time',$date->copy()->toDateString())->exists();
+            if ($exists) {
+                continue;
+            }
+            $this->createTodayVerse($date);
+            $this->info('生成今日名句计划:' . $date);
+        }
+    }
     public function getRandVerse() : int
     {
         $last = Verse::query()->select('id')->where('status', Verse::STATUS_NORMAL)->orderBy('id', 'desc')->first();
