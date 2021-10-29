@@ -24,9 +24,9 @@ Route::prefix('v1')->group(function () {
 
     Route::middleware('api.guard')->group(function () {
         //注册
-        Route::post('/register', [RegisterController::class, 'register'])->name('register');
+        Route::post('/register', [RegisterController::class, 'register'])->name('user.register');
         //登陆
-        Route::post('/login',[LoginController::class, 'login'])->name('users.login');
+        Route::post('/login',[LoginController::class, 'login'])->name('user.login');
 
         Route::middleware('token.refresh')->group(function () {
             //用户资料

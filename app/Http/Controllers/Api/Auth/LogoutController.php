@@ -17,7 +17,7 @@ class LogoutController extends Controller
     public function logout(Request $request)
     {
         Auth::logout();
-        return $this->success('退出成功...');
+        return $this->success('退出成功');
     }
 
 }

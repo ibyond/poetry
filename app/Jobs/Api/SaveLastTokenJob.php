@@ -11,19 +11,21 @@ use Illuminate\Foundation\Bus\Dispatchable;
 class SaveLastTokenJob implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
+
     protected $model;
     protected $token;
+
     /**
      * Create a new job instance.
      *
      * @return void
      */
 
-    public function __construct($model,$token)
+    public function __construct($model, $token)
     {
         //
-        $this->model=$model;
-        $this->token=$token;
+        $this->model = $model;
+        $this->token = $token;
     }
 
     /**
