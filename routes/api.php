@@ -1,8 +1,12 @@
 <?php
 
+use App\Http\Controllers\Api\Auth\RegisterController;
+use App\Http\Controllers\Api\Auth\LogoutController;
+use App\Http\Controllers\Api\Auth\LoginController;
+use App\Http\Controllers\Api\AdminController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-
+use App\Http\Controllers\Api\UserController;
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -14,6 +18,24 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
+Route::prefix('v1')->group(function () {
+    //测试
+    Route::get('/test', [UserController::class, 'test'])->name('test');
+
+    Route::middleware('api.guard')->group(function () {
+        //注册
+        Route::post('/register', [RegisterController::class, 'register'])->name('register');
+        //登陆
+        Route::post('/login',[LoginController::class, 'login'])->name('users.login');
+
+        Route::middleware('token.refresh')->group(function () {
+            //用户资料
+            Route::get('/me',[UserController::class, 'me'])->name('users.me');
+            //退出
+            Route::post('/logout',[LogoutController::class, 'logout'])->name('users.logout');
+        });
+    });
+
+
+
 });
