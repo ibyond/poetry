@@ -53,6 +53,11 @@ class TagController extends AdminController
             $show->field('sort', '排序')->label();
             $show->field('created_at');
             $show->field('updated_at');
+
+            $show->panel()
+                ->tools(function ($tools) {
+                    $tools->disableDelete();
+                });
         });
     }
 
@@ -65,13 +70,23 @@ class TagController extends AdminController
     {
         return Form::make(new Tag(), function (Form $form) {
             $form->display('id');
-            $form->text('name');
-            $form->text('desc');
-            $form->text('status');
-            $form->text('sort');
+            $form->text('name', '标签名');
+            $form->text('desc', '描述');
+            $form->switch('status', '状态')->default(1);
+            $form->number('sort', '排序')->default(100)->min(1);
 
             $form->display('created_at');
             $form->display('updated_at');
+
+            $form->disableDeleteButton();
+
+            $form->saving(function (Form $form) {
+                // 修改
+                $sort = $form->input('sort');
+                if ($sort <= 0) {
+                    return $form->response()->error('排序必须大于0');
+                }
+            });
         });
     }
 }
